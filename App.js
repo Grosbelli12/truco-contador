@@ -2,17 +2,26 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { useState } from "react";
 import { ButtonProps } from "./components/Buttons";
+import { Truco } from "./components/Truco";
 
 export default function App() {
   const [contador, setContador] = useState(0);
   const [contador2, setContador2] = useState(0);
+  const [valorRodada, setValorRodada] = useState(1);
+
+  const valorDaRodada = (valor) => {
+    setValorRodada(valor);
+  };
 
   const aumentar = (time) => {
-    if (contador < 12 && time === "Nós") {
-      setContador(contador + 1);
-    } else if (contador2 < 12 && time === "Eles") {
-      setContador2(contador2 + 1);
+    if (time === "Nós") {
+      const novoPlacar = contador + valorRodada;
+      setContador(novoPlacar > 12 ? 12 : novoPlacar);
+    } else {
+      const novoPlacar = contador2 + valorRodada;
+      setContador2(novoPlacar > 12 ? 12 : novoPlacar);
     }
+    setValorRodada(1);
   };
 
   const diminuir = (time) => {
@@ -30,23 +39,32 @@ export default function App() {
 
       <View style={styles.centro}>
         <View style={styles.buttonContainer}>
-          <ButtonProps
-            placar={contador}
-            titulo={"Nós"}
-            funcao={() => aumentar("Nós")}
-            funcao2={() => diminuir("Nós")}
-            temas={styles}
-          />
+          <View style={styles.buttonContainer}>
+            <View style={styles.colunaTotal}>
+              <ButtonProps
+                placar={contador}
+                titulo="Nós"
+                funcao={() => aumentar("Nós")}
+                funcao2={() => diminuir("Nós")}
+                temas={styles}
+              />
+              <Truco funcao={valorDaRodada} time="Nós" estilos={styles} />
+            </View>
 
-          <ButtonProps
-            placar={contador2}
-            titulo={"Eles"}
-            funcao={() => aumentar("Eles")}
-            funcao2={() => diminuir("Eles")}
-            temas={styles}
-          />
+            <View style={styles.colunaTotal}>
+              <ButtonProps
+                placar={contador2}
+                titulo="Eles"
+                funcao={() => aumentar("Eles")}
+                funcao2={() => diminuir("Eles")}
+                temas={styles}
+              />
+              <Truco funcao={valorDaRodada} time="Eles" estilos={styles} />
+            </View>
+          </View>
         </View>
       </View>
+
       <StatusBar style="auto" />
     </View>
   );
@@ -57,50 +75,91 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    marginTop: 100,
+    paddingTop: 100,
+  },
+  header: {
+    marginBottom: 40,
   },
   image: {
-    height: 70,
-    width: 220,
+    height: 80,
+    width: 250,
+    resizeMode: "contain",
   },
   centro: {
-    justifyContent: "center",
+    width: "100%",
+    alignItems: "center",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: 350,
+    width: "100%",
+    paddingHorizontal: 20,
   },
-  estiloContainer: {
-    alignItems: "center",
+  colunaTotal: {
+    alignItems: "stretch",
+    width: "47%",
   },
   estiloTexto: {
-    fontSize: 24,
-    color: "#000000",
-    marginBottom: 20,
-    marginTop: 70,
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#777",
+    textTransform: "uppercase",
+    alignSelf: "center",
+  },
+  numeroPlacar: {
+    fontSize: 90,
+    fontWeight: "bold",
+    color: "#333",
+    alignSelf: "center",
+    marginVertical: 10,
   },
   containerBotao: {
     flexDirection: "row",
+    justifyContent: "center",
     gap: 10,
-    marginTop: 20,
+    width: "100%",
+    marginVertical: 15,
   },
-  botao: { 
-    width: 75,
-    height: 55,
+  botao: {
+    flex: 1,
+    height: 70,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 20,
+    borderRadius: 15,
+    backgroundColor: "#006437",
   },
-  estiloBotao: { 
-    width: 75,
-    height: 55,
+  estiloBotao: {
+    flex: 1,
+    height: 70,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 20,
+    borderRadius: 15,
+    backgroundColor: "#7a0026",
   },
+
   textoBotao: {
     color: "#fff",
-    fontSize: 25,
+    fontSize: 40,
+    fontWeight: "bold",
+  },
+  colunaApostas: {
+    width: "100%",
+    gap: 10,
+  },
+  botaoAposta: {
+    height: 55,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+  },
+  textoAposta: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    letterSpacing: 1,
   },
 });
